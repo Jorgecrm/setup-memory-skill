@@ -32,7 +32,7 @@ Read each template from this skill's `templates/` folder and use it exactly. Do 
 
 Create these 4 files from their templates:
 - `Memory/README.md` ← `templates/memory-readme.md` — after copying, add one line under the title: `**Project:** [user's answer from Step 1]`
-- `Memory/session-log.md` ← `templates/session-log.md`
+- `Memory/current-state.md` ← `templates/current-state.md` — after copying, fill in the `**Project:**` line with the user's answer from Step 1
 - `Memory/project-decisions.md` ← `templates/project-decisions.md`
 - `Memory/about-me.md` ← `templates/about-me.md`
 
@@ -52,7 +52,7 @@ Add this hook to `.claude/settings.json`. If the file already exists, merge care
         "hooks": [
           {
             "type": "command",
-            "command": "printf '%s' '{\"continue\":true,\"suppressOutput\":true,\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"MEMORY RULE — mandatory this session: Read the Memory/ folder files at the start of this session to get up to speed on past decisions and progress. When the user signals they are wrapping up (says done, see you tomorrow, going to clear, update memory, wrap up, or similar), run the end-session skill to save the session to the Memory/ folder. Do not wait to be asked.\"}}'" ,
+            "command": "printf '%s' '{\"continue\":true,\"suppressOutput\":true,\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"MEMORY RULE — mandatory this session: Read Memory/current-state.md at the start of this session to get up to speed on where the project stands. That single file is all you need — it is always up to date. When the user signals they are wrapping up (says done, see you tomorrow, going to clear, update memory, wrap up, or similar), run the end-session skill to save the session. Do not wait to be asked.\"}}'" ,
             "statusMessage": "Loading memory rules..."
           }
         ]

@@ -8,13 +8,13 @@ This folder is the brain of this project. It keeps track of everything important
 
 | File | What it holds |
 |------|---------------|
+| `current-state.md` | A single snapshot of where the project stands right now — overwritten each session, never grows |
 | `about-me.md` | Your preferences, habits, and patterns Claude notices |
 | `project-decisions.md` | Every design and build decision that gets locked in |
-| `session-log.md` | A diary of what gets done each session, newest at the top |
 
 ## How it works
 
-At the start of each session, Claude reads these files to get up to speed.
-At the end of each session, Claude updates them with what happened.
+At the start of each session, Claude reads `current-state.md` — one small file, always up to date.
+At the end of each session, Claude overwrites it with a fresh snapshot of what happened and what's next.
 
 You never have to ask. It just happens.

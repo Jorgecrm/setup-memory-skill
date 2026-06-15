@@ -12,6 +12,12 @@ Every time you start a new Claude Code session, Claude has no idea what you were
 
 ---
 
+## How It Stays Token-Efficient
+
+At the start of each session, Claude reads **one small file** — `Memory/current-state.md`. It's always up to date and never grows. At the end of the session, the memory-keeper agent **overwrites** it with a fresh snapshot. No diary, no accumulation, no token bloat.
+
+---
+
 ## What Gets Created (One-Time Setup)
 
 When you run the skill, it creates:
@@ -19,11 +25,11 @@ When you run the skill, it creates:
 | Item | What it does |
 |------|--------------|
 | `Memory/README.md` | Explains the memory system in plain language |
-| `Memory/session-log.md` | A diary of each work session — newest at the top |
+| `Memory/current-state.md` | Single snapshot of where the project stands — overwritten each session |
 | `Memory/project-decisions.md` | Every locked design/build decision so you never relitigate them |
 | `Memory/about-me.md` | Your preferences and habits Claude notices over time |
 | `.claude/agents/memory-keeper.md` | A fast sub-agent that writes to the Memory files |
-| `.claude/settings.json` hook | Tells Claude to read Memory/ at session start, save at session end |
+| `.claude/settings.json` hook | Tells Claude to read current-state.md at session start, save at session end |
 
 ---
 
@@ -42,10 +48,10 @@ Create a new folder inside it called `setup-memory` and copy these files in:
   SKILL.md
   templates/
     about-me.md
+    current-state.md
     memory-keeper-agent.md
     memory-readme.md
     project-decisions.md
-    session-log.md
 ```
 
 ### Step 2 — Open a Claude Code session in your project
@@ -65,7 +71,7 @@ Claude will ask you one question: **"What is this project about?"** — answer i
 
 ### Step 4 — Start a new session
 
-Close the current session and open a new one. From that point on, memory is active. Claude will read the Memory/ folder at the start of every session.
+Close the current session and open a new one. From that point on, memory is active. Claude will read `Memory/current-state.md` at the start of every session.
 
 ---
 
@@ -81,12 +87,12 @@ Claude will save the session automatically. You don't have to do anything else.
 
 ---
 
-## What the Memory/ Folder Looks Like After a Few Sessions
+## What the Memory/ Folder Looks Like
 
 ```
 Memory/
   README.md              ← explains the folder
-  session-log.md         ← diary of sessions (newest at top)
+  current-state.md       ← always up to date, never grows
   project-decisions.md   ← locked decisions
   about-me.md            ← your preferences
 ```
@@ -109,8 +115,8 @@ All files are plain text — you can read and edit them anytime.
 setup-memory/
   SKILL.md                          ← skill definition (Claude reads this)
   templates/
+    current-state.md                ← template for Memory/current-state.md
     memory-readme.md                ← template for Memory/README.md
-    session-log.md                  ← template for Memory/session-log.md
     project-decisions.md            ← template for Memory/project-decisions.md
     about-me.md                     ← template for Memory/about-me.md
     memory-keeper-agent.md          ← template for the memory-keeper sub-agent
