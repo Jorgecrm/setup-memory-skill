@@ -16,6 +16,8 @@ Every time you start a new Claude Code session, Claude has no idea what you were
 
 At the start of each session, Claude reads **one small file** — `Memory/current-state.md`. It's always up to date and never grows. At the end of the session, the memory-keeper agent **overwrites** it with a fresh snapshot. No diary, no accumulation, no token bloat.
 
+Everything lives in that one file — project status, what happened last session, top decisions, your work preferences, and what to do next.
+
 ---
 
 ## What Gets Created (One-Time Setup)
@@ -25,10 +27,8 @@ When you run the skill, it creates:
 | Item | What it does |
 |------|--------------|
 | `Memory/README.md` | Explains the memory system in plain language |
-| `Memory/current-state.md` | Single snapshot of where the project stands — overwritten each session |
-| `Memory/project-decisions.md` | Every locked design/build decision so you never relitigate them |
-| `Memory/about-me.md` | Your preferences and habits Claude notices over time |
-| `.claude/agents/memory-keeper.md` | A fast sub-agent that writes to the Memory files |
+| `Memory/current-state.md` | One file with everything: status, decisions, preferences, next step — overwritten each session |
+| `.claude/agents/memory-keeper.md` | A fast sub-agent that rewrites current-state.md at session end |
 | `.claude/settings.json` hook | Tells Claude to read current-state.md at session start, save at session end |
 
 ---
@@ -47,11 +47,9 @@ Create a new folder inside it called `setup-memory` and copy these files in:
 ~/.claude/skills/setup-memory/
   SKILL.md
   templates/
-    about-me.md
     current-state.md
     memory-keeper-agent.md
     memory-readme.md
-    project-decisions.md
 ```
 
 ### Step 2 — Open a Claude Code session in your project
@@ -87,17 +85,40 @@ Claude will save the session automatically. You don't have to do anything else.
 
 ---
 
+## What current-state.md Looks Like
+
+```
+# Current State
+
+**Project:** My SaaS app
+**Status:** Auth is working, now building the dashboard
+**Last session:** June 15, 2026
+
+**What we did:**
+- Set up Supabase auth with email/password
+- Connected it to the frontend login page
+- Fixed the redirect bug after login
+
+**Key decisions:**
+- Using Supabase for auth (not NextAuth)
+- Dashboard uses a sidebar layout, not tabs
+
+**About me:**
+- Explain things in plain language, no jargon
+- Always tell me what to do next
+
+**Next step:** Build the dashboard sidebar component
+```
+
+---
+
 ## What the Memory/ Folder Looks Like
 
 ```
 Memory/
-  README.md              ← explains the folder
-  current-state.md       ← always up to date, never grows
-  project-decisions.md   ← locked decisions
-  about-me.md            ← your preferences
+  README.md          ← explains the folder
+  current-state.md   ← one file, always up to date, never grows
 ```
-
-All files are plain text — you can read and edit them anytime.
 
 ---
 
@@ -113,13 +134,11 @@ All files are plain text — you can read and edit them anytime.
 
 ```
 setup-memory/
-  SKILL.md                          ← skill definition (Claude reads this)
+  SKILL.md                     ← skill definition (Claude reads this)
   templates/
-    current-state.md                ← template for Memory/current-state.md
-    memory-readme.md                ← template for Memory/README.md
-    project-decisions.md            ← template for Memory/project-decisions.md
-    about-me.md                     ← template for Memory/about-me.md
-    memory-keeper-agent.md          ← template for the memory-keeper sub-agent
+    current-state.md           ← template for Memory/current-state.md
+    memory-readme.md           ← template for Memory/README.md
+    memory-keeper-agent.md     ← template for the memory-keeper sub-agent
 ```
 
 ---

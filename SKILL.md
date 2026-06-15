@@ -30,11 +30,9 @@ Read each template from this skill's `templates/` folder and use it exactly. Do 
 
 ### Memory/ folder
 
-Create these 4 files from their templates:
+Create these 2 files from their templates:
 - `Memory/README.md` ← `templates/memory-readme.md` — after copying, add one line under the title: `**Project:** [user's answer from Step 1]`
 - `Memory/current-state.md` ← `templates/current-state.md` — after copying, fill in the `**Project:**` line with the user's answer from Step 1
-- `Memory/project-decisions.md` ← `templates/project-decisions.md`
-- `Memory/about-me.md` ← `templates/about-me.md`
 
 ### Memory-keeper agent
 
