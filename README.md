@@ -1,6 +1,6 @@
 # setup-memory — Claude Code Skill
 
-A skill that gives Claude **persistent memory across sessions**. Once installed, Claude automatically reads what happened in past sessions when you start a new one, and saves what happened when you're done — without you having to ask.
+A skill that gives Claude **persistent memory across sessions**. Once installed, Claude automatically loads project context at the start of every session and saves it at the end — without you having to ask.
 
 ---
 
@@ -12,24 +12,24 @@ Every time you start a new Claude Code session, Claude has no idea what you were
 
 ---
 
-## How It Stays Token-Efficient
+## How It Works
 
-At the start of each session, Claude reads **one small file** — `Memory/current-state.md`. It's always up to date and never grows. At the end of the session, the memory-keeper agent **overwrites** it with a fresh snapshot. No diary, no accumulation, no token bloat.
+- **Session start:** A hook runs automatically and injects the contents of `Memory/current-state.md` directly into Claude's context — no file read required, guaranteed to load.
+- **Session end:** When you say "done", Claude runs the end-session skill → session-handoff → memory-keeper rewrites `current-state.md` with a fresh snapshot.
+- **If you close without saying done:** A `SessionEnd` hook writes a marker file. Next session, Claude is warned that the previous session wasn't saved.
 
-Everything lives in that one file — project status, what happened last session, top decisions, your work preferences, and what to do next.
+One file, always fresh, never grows.
 
 ---
 
 ## What Gets Created (One-Time Setup)
 
-When you run the skill, it creates:
-
 | Item | What it does |
 |------|--------------|
-| `Memory/README.md` | Explains the memory system in plain language |
-| `Memory/current-state.md` | One file with everything: status, decisions, preferences, next step — overwritten each session |
-| `.claude/agents/memory-keeper.md` | A fast sub-agent that rewrites current-state.md at session end |
-| `.claude/settings.json` hook | Tells Claude to read current-state.md at session start, save at session end |
+| `Memory/README.md` | Explains the memory system |
+| `Memory/current-state.md` | Single snapshot — status, decisions, preferences, next step. Overwritten each session. |
+| `.claude/agents/memory-keeper.md` | Sub-agent that rewrites current-state.md at session end |
+| `.claude/settings.json` hooks | SessionStart: injects memory into context. SessionEnd: writes crash-guard marker. |
 
 ---
 
@@ -37,12 +37,6 @@ When you run the skill, it creates:
 
 ### Step 1 — Copy the skill into your Claude Code skills folder
 
-Your skills folder is at:
-```
-~/.claude/skills/
-```
-
-Create a new folder inside it called `setup-memory` and copy these files in:
 ```
 ~/.claude/skills/setup-memory/
   SKILL.md
@@ -52,36 +46,29 @@ Create a new folder inside it called `setup-memory` and copy these files in:
     memory-readme.md
 ```
 
-### Step 2 — Open a Claude Code session in your project
-
-Open Claude Code inside the project you want to add memory to.
-
-### Step 3 — Trigger the skill
-
-Just say one of these things:
+### Step 2 — Open Claude Code in your project and say:
 
 - `set up memory`
 - `add memory to this project`
 - `I want Claude to remember things across sessions`
-- `initialize memory`
 
-Claude will ask you one question: **"What is this project about?"** — answer it in plain language. Then it sets everything up automatically.
+Claude asks two questions: what the project is, and what you want to build first. Then sets everything up.
 
-### Step 4 — Start a new session
+### Step 3 — Start a new session
 
-Close the current session and open a new one. From that point on, memory is active. Claude will read `Memory/current-state.md` at the start of every session.
+From that point on, memory is active automatically.
 
 ---
 
 ## How Memory Gets Saved
 
-When you're done working, say any of these:
+Say any of these when you're done:
 - `done for today`
 - `see you tomorrow`
 - `update memory`
 - `wrap up`
 
-Claude will save the session automatically. You don't have to do anything else.
+Claude saves the session automatically. If you close without saying done, the next session will warn you that memory from the previous session may be missing.
 
 ---
 
@@ -90,56 +77,34 @@ Claude will save the session automatically. You don't have to do anything else.
 ```
 # Current State
 
-**Project:** My SaaS app
-**Status:** Auth is working, now building the dashboard
+**Project:** My Forex trading journal SaaS
+**Status:** Login page built, now building the dashboard
 **Last session:** June 15, 2026
 
 **What we did:**
-- Set up Supabase auth with email/password
-- Connected it to the frontend login page
-- Fixed the redirect bug after login
+- Built login page with Supabase auth
+- Connected frontend to Supabase
+- Fixed redirect bug after login
 
 **Key decisions:**
-- Using Supabase for auth (not NextAuth)
-- Dashboard uses a sidebar layout, not tabs
+- Using Supabase for auth (not Firebase)
+- Next.js for the frontend
 
 **About me:**
 - Explain things in plain language, no jargon
 - Always tell me what to do next
 
-**Next step:** Build the dashboard sidebar component
-```
-
----
-
-## What the Memory/ Folder Looks Like
-
-```
-Memory/
-  README.md          ← explains the folder
-  current-state.md   ← one file, always up to date, never grows
+**Next step:** Build the dashboard main view
 ```
 
 ---
 
 ## Requirements
 
-- [Claude Code](https://claude.ai/code) (the CLI or desktop app)
-- A project folder (any project — SaaS, website, trading bot, anything)
+- [Claude Code](https://claude.ai/code)
+- A project folder
 - The skill installed in `~/.claude/skills/setup-memory/`
-
----
-
-## File Structure of This Skill
-
-```
-setup-memory/
-  SKILL.md                     ← skill definition (Claude reads this)
-  templates/
-    current-state.md           ← template for Memory/current-state.md
-    memory-readme.md           ← template for Memory/README.md
-    memory-keeper-agent.md     ← template for the memory-keeper sub-agent
-```
+- Also install the `session-handoff` and `end-session` skills — the save chain depends on them
 
 ---
 
