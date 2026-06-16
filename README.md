@@ -35,15 +35,30 @@ One file, always fresh, never grows.
 
 ## How to Set It Up
 
-### Step 1 — Copy the skill into your Claude Code skills folder
+### Step 1 — Copy all three skills into your Claude Code skills folder
 
+This skill has two dependencies that handle saving memory at session end. All three need to be installed.
+
+**setup-memory** (this skill — the main one):
 ```
 ~/.claude/skills/setup-memory/
-  SKILL.md
+  SKILL.md              ← SKILL.md from the root of this repo
   templates/
     current-state.md
     memory-keeper-agent.md
     memory-readme.md
+```
+
+**session-handoff** (writes the end-of-session summary):
+```
+~/.claude/skills/session-handoff/
+  SKILL.md              ← session-handoff/SKILL.md from this repo
+```
+
+**end-session** (triggers the save workflow when you say "done"):
+```
+~/.claude/skills/end-session/
+  SKILL.md              ← end-session/SKILL.md from this repo
 ```
 
 ### Step 2 — Open Claude Code in your project and say:
@@ -103,8 +118,7 @@ Claude saves the session automatically. If you close without saying done, the ne
 
 - [Claude Code](https://claude.ai/code)
 - A project folder
-- The skill installed in `~/.claude/skills/setup-memory/`
-- Also install the `session-handoff` and `end-session` skills — the save chain depends on them
+- All three skills installed (setup-memory, session-handoff, end-session)
 
 ---
 
